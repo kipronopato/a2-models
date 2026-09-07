@@ -1,17 +1,14 @@
-# a2-models — DSA 8401 Assignment 2: The Cost of Being Wrong
+# a2-models
 
-## Scope note (read this first)
+DSA 8401 Applied Machine Learning, Assignment 2: **The Cost of Being Wrong**
 
-Assignment 2 asks us to build on "the output from Assignment 1, exactly as it was."
-A1's deliverable is a **mobile-money fraud-scoring pipeline** (target `is_fraud`,
-base rate 8.41%), not a loan-approval/default dataset. Rather than build a second,
-unrelated dataset, this submission keeps A1's cleaning and 18 engineered features
-completely unchanged and maps the assignment's credit-risk vocabulary onto the
-fraud-scoring task one-for-one, as the brief explicitly allows ("use the instructor's
-reference pipeline instead, no penalty... just say clearly you did this" — here we
-went one step further and kept our own A1 pipeline, disclosed and mapped):
+## What this project does
 
-| Assignment 2 term | This submission |
+This is my Assignment 2 analysis of the mobile-money fraud model from Assignment 1. The
+assignment uses loan-default terms, but my data are transactions, so I kept the same idea and
+translated the decisions to fraud screening:
+
+| Assignment wording | Used here |
 |---|---|
 | Borrower / application | Mobile-money transaction |
 | Default | Fraudulent transaction (`is_fraud = 1`) |
@@ -20,57 +17,50 @@ went one step further and kept our own A1 pipeline, disclosed and mapped):
 | Missed default (KES 10,000) | Missed fraud — false negative |
 | Wrongly rejected good borrower (KES 800) | Wrongly flagged legitimate transaction — false positive |
 
-The cost values (10,000 / 800, a 12.5x asymmetry) are used exactly as given in the
-brief. The observed base rate is 8.41%, not 4% — reported honestly rather than forced
-to match, since the same "rare, costly, asymmetric" logic the assignment is testing
-applies regardless of the exact rate.
+I used the supplied KES 10,000 cost for a missed fraud and KES 800 cost for an unnecessary flag.
+The data have an 8.41% fraud rate rather than the illustrative 4% rate in the brief, so I report
+the observed value instead of changing it.
 
-## Reproducing this submission
+The notebook compares logistic regression, random forest, and XGBoost using the same time-ordered
+folds. It then compares imbalance strategies, tunes XGBoost with Optuna, chooses a cost-based
+threshold, checks calibration, and produces SHAP and subgroup results.
 
-The modelling input is not committed to this repository. Place the Assignment 1 source file at
-`Data/mobile_money_statements.csv` before executing the notebook. In the original workspace the
-loader also accepts the existing parent-level `Data/` folder, but the project-local path is the
-recommended layout for a standalone clone. The raw file is excluded by `.gitignore`.
+## Running it
+
+The source CSV is not included in this repository. Before running the notebook, place the Assignment
+1 file at `Data/mobile_money_statements.csv`. It is excluded by `.gitignore` because it is supplied
+separately.
 
 ```bash
 cd a2-models
 pip install -r requirements.txt
 jupyter nbconvert --to notebook --execute --inplace \
-    --ExecutePreprocessor.timeout=3600 notebook/assignment2_report.ipynb   # ~25-30 min, mostly the Optuna study
-python report/build_a2_report.py   # rebuilds A2_Report.docx from the artifacts the notebook wrote
+    --ExecutePreprocessor.timeout=3600 notebook/assignment2_report.ipynb
+python report/build_a2_report.py
 ```
 
-Or open `notebook/assignment2_report.ipynb` in Jupyter/JupyterLab and Run All — every cell
-executes top to bottom with no manual steps in between. The notebook covers, in order:
+The Optuna section is the slowest part of the run. The report builder uses the results saved in
+`artifacts/` to create the Word report. The notebook covers:
 
-1. **Evaluation plan** — purged/blocked time-series CV, PR-AUC vs. ROC-AUC rationale.
-2. **Ladder of models** — logistic regression vs. random forest vs. XGBoost, identical folds.
-3. **Imbalance handling** — class weighting vs. in-fold SMOTE, plus the required proof that
-   resampling outside the folds inflates the score.
-4. **Budget-limited tuning** — a 65-trial Optuna study (SQLite storage at
-   `artifacts/optuna_study.db`), MedianPruner, subsampled search folds.
-5. **Final model + cost threshold + calibration** — full-scale refit with the tuned
-   hyperparameters, cost-based threshold, reliability diagram, Brier score before/after,
-   threshold recalculated on calibrated scores.
-6. **Explainability and fairness** — global/local SHAP, subgroup fairness (region, tenure
-   band), saves the final production pipeline.
-7. **Recommendation** — one model, one threshold.
+1. Time-ordered evaluation with PR-AUC as the main metric.
+2. A comparison of three model families on the same folds.
+3. Class weighting versus in-fold SMOTE, including a leakage check.
+4. A 65-trial Optuna search with pruning.
+5. Calibration, cost-based threshold selection, and reliability curves.
+6. Global and local SHAP explanations and subgroup checks.
+7. A final model and threshold recommendation.
 
-All outputs land in `artifacts/` (`tables/`, `figures/`, `oof/`, the Optuna DB, and
-`final_fraud_pipeline.joblib`). `src/` holds the shared, reusable modules the notebook imports:
-`data.py` (A1's cleaning/features, untouched), `cv.py` (the purged/blocked splitter),
-`models.py` (pipelines), `costs.py` (cost-curve helpers) — kept out of the notebook so the
-notebook reads as analysis narrative rather than plumbing.
+The notebook writes its tables and figures to `artifacts/`, along with the Optuna database, OOF
+probabilities, and saved pipeline. The reusable code is in `src/`: `data.py` handles the A1 feature
+table, `cv.py` contains the time-based splitter, `models.py` builds the pipelines, and `costs.py`
+handles the threshold calculations.
 
-The repository intentionally contains only the A2 analysis, its generated evidence, and the
-reproduction code. Earlier Assignment 1 notebooks, duplicate data folders, intermediate reports,
-and local model files are outside this submission folder and are not needed here.
+Only the files needed for this Assignment 2 submission are included here. Earlier Assignment 1
+notebooks and duplicate working files are kept outside this folder.
 
 ## Report
 
-`report/` contains the 4-page write-up (`A2_Report.docx`) and its build script
-(`build_a2_report.py`), which reads every number straight from `artifacts/` so it stays in
-sync with whatever the notebook last produced.
+`report/` contains the four-page write-up and the script used to build it from the saved artifacts.
 
 ## Repository layout
 
@@ -78,9 +68,9 @@ sync with whatever the notebook last produced.
 a2-models/
 ├── notebook/
 │   ├── assignment2_report.ipynb   # the analysis: run this top to bottom
-│   └── _build_notebook.py         # (dev tool) regenerates the .ipynb cells from source; not part of the analysis
-├── src/                           # small reusable library the notebook imports
-├── artifacts/                     # everything the notebook writes: tables/, figures/, oof/, the Optuna DB, the saved pipeline
+│   └── _build_notebook.py         # rebuilds the notebook from its cell definitions
+├── src/                           # reusable data, CV, model, and cost code
+├── artifacts/                     # tables, figures, model outputs, and the Optuna study
 ├── report/
 │   ├── A2_Report.docx             # the 4-page submission
 │   └── build_a2_report.py         # rebuilds the .docx from artifacts/
