@@ -1,0 +1,9 @@
+{
+  "fold_used": 4,
+  "n_train": 157375,
+  "n_test": 21600,
+  "pr_auc_honest_infold_smote": 0.13125832974926047,
+  "pr_auc_leaky_outoffold_smote": 0.14458392064469636,
+  "inflation": 0.01332559089543589,
+  "inflation_pct": 10.15218685236315
+}

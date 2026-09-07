@@ -1,0 +1,19 @@
+{
+  "raw": {
+    "best_threshold": 0.0871726907630522,
+    "best_cost_per_1000": 629707.4074074074,
+    "naive_threshold": 0.5,
+    "naive_cost_per_1000": 844074.074074074,
+    "savings_per_1000": 214366.66666666663,
+    "savings_pct": 25.396665204036857
+  },
+  "calibrated": {
+    "best_threshold": 0.07114056224899598,
+    "best_cost_per_1000": 626018.5185185184,
+    "naive_threshold": 0.5,
+    "naive_cost_per_1000": 844074.074074074,
+    "savings_per_1000": 218055.55555555562,
+    "savings_pct": 25.833698990785443
+  },
+  "threshold_shift": -0.01603212851405622
+}

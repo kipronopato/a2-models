@@ -1,0 +1,72 @@
+{
+  "best_value": 0.13501789787125254,
+  "best_params": {
+    "n_estimators": 391,
+    "max_depth": 4,
+    "learning_rate": 0.09564633597509722,
+    "subsample": 0.8340107229942252,
+    "colsample_bytree": 0.5741145158566539,
+    "min_child_weight": 16,
+    "gamma": 4.606290692407431,
+    "reg_alpha": 9.612582293907813,
+    "reg_lambda": 5.654860950793794
+  },
+  "n_trials": 65,
+  "n_completed": 20,
+  "n_pruned": 45,
+  "search_space": {
+    "n_estimators": [
+      "int",
+      100,
+      500
+    ],
+    "max_depth": [
+      "int",
+      2,
+      8
+    ],
+    "learning_rate": [
+      "float_log",
+      0.01,
+      0.3
+    ],
+    "subsample": [
+      "float",
+      0.5,
+      1.0
+    ],
+    "colsample_bytree": [
+      "float",
+      0.5,
+      1.0
+    ],
+    "min_child_weight": [
+      "int",
+      1,
+      20
+    ],
+    "gamma": [
+      "float",
+      0.0,
+      5.0
+    ],
+    "reg_alpha": [
+      "float_log",
+      0.001,
+      10.0
+    ],
+    "reg_lambda": [
+      "float_log",
+      0.001,
+      10.0
+    ]
+  },
+  "search_fold_idx": [
+    2,
+    3,
+    4
+  ],
+  "max_train_subsample": 50000,
+  "pruner": "MedianPruner(n_startup_trials=10, n_warmup_steps=1)",
+  "sampler": "TPESampler"
+}

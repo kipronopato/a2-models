@@ -1,0 +1,9 @@
+{
+  "model": "xgboost_tuned_smote",
+  "pr_auc_mean": 0.13944308712272552,
+  "pr_auc_std": 0.0032237942642577176,
+  "roc_auc_mean": 0.6272745733255679,
+  "roc_auc_std": 0.004950894603244374,
+  "brier_raw_pooled": 0.07619812705966214,
+  "brier_calibrated_pooled": 0.07580151116023941
+}
