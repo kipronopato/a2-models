@@ -5,6 +5,3 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# The source CSV is supplied separately because it is not part of the hand-in.
-Data/*
-!Data/README.md

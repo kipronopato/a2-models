@@ -27,9 +27,7 @@ threshold, checks calibration, and produces SHAP and subgroup results.
 
 ## Running it
 
-The source CSV is not included in this repository. Before running the notebook, place the Assignment
-1 file at `Data/mobile_money_statements.csv`. It is excluded by `.gitignore` because it is supplied
-separately.
+The modelling data is included at `Data/mobile_money_statements.csv`.
 
 ```bash
 cd a2-models
@@ -39,28 +37,13 @@ jupyter nbconvert --to notebook --execute --inplace \
 python report/build_a2_report.py
 ```
 
-The Optuna section is the slowest part of the run. The report builder uses the results saved in
-`artifacts/` to create the Word report. The notebook covers:
-
-1. Time-ordered evaluation with PR-AUC as the main metric.
-2. A comparison of three model families on the same folds.
-3. Class weighting versus in-fold SMOTE, including a leakage check.
-4. A 65-trial Optuna search with pruning.
-5. Calibration, cost-based threshold selection, and reliability curves.
-6. Global and local SHAP explanations and subgroup checks.
-7. A final model and threshold recommendation.
-
-The notebook writes its tables and figures to `artifacts/`, along with the Optuna database, OOF
-probabilities, and saved pipeline. The reusable code is in `src/`: `data.py` handles the A1 feature
-table, `cv.py` contains the time-based splitter, `models.py` builds the pipelines, and `costs.py`
-handles the threshold calculations.
-
-Only the files needed for this Assignment 2 submission are included here. Earlier Assignment 1
-notebooks and duplicate working files are kept outside this folder.
+The notebook covers time-ordered evaluation, three model families, imbalance handling, a 65-trial
+Optuna search, calibration, cost-based threshold selection, SHAP explanations, and subgroup checks.
+The Optuna section is the slowest part of the run. Results are written to `artifacts/`.
 
 ## Report
 
-`report/` contains the four-page write-up and the script used to build it from the saved artifacts.
+`report/` contains the four-page write-up and the script used to build it.
 
 ## Repository layout
 
